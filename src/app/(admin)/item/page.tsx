@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
-const TypePage: React.FC = (): JSX.Element => {
+const ItemPage: React.FC = (): JSX.Element => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,7 +17,7 @@ const TypePage: React.FC = (): JSX.Element => {
 
   const deleteType = async (id: string) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BACKEND}/type/${id}`,
+      `${process.env.NEXT_PUBLIC_API_BACKEND}/item/${id}`,
       {
         method: "DELETE",
       }
@@ -59,7 +59,7 @@ const TypePage: React.FC = (): JSX.Element => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BACKEND}/type?page=${page}&limit=${itemsPerPage}`,
+        `${process.env.NEXT_PUBLIC_API_BACKEND}/item?page=${page}&limit=${itemsPerPage}`,
         {
           method: "GET",
         }
@@ -98,19 +98,21 @@ const TypePage: React.FC = (): JSX.Element => {
     <>
       <div className="py-6 px-8 bg-white border shadow mt-4 rounded-2xl">
         <p className="text-lg">
-          <span className="text-blue-700 font-bold">Jenis Barang / </span>
-          <span>Tabel Jenis Barang</span>
+          <span className="text-blue-700 font-bold">Barang / </span>
+          <span>Tabel Barang</span>
         </p>
       </div>
 
       <div className="py-10 px-8 bg-white border shadow mt-8 rounded-2xl">
-        <LinkComponent link="/type/create">Tambah Jenis Barang</LinkComponent>
+        <LinkComponent link="/item/create">Tambah Barang</LinkComponent>
 
         <div className="w-full border border-gray-200 rounded-xl overflow-x-auto mt-10">
           <table className="w-full divide-y divide-gray-200">
             <thead className="bg-gray-50 text-slate-800">
               <tr className="divide-x divide-gray-200">
                 <th className="px-4 py-4">No</th>
+                <th className="px-4 py-4">Nama Barang</th>
+                <th className="px-4 py-4">Stock</th>
                 <th className="px-4 py-4">Jenis Barang</th>
                 <th className="px-4 py-4">Aksi</th>
               </tr>
@@ -118,7 +120,7 @@ const TypePage: React.FC = (): JSX.Element => {
             <tbody className="divide-y divide-gray-200 bg-white text-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan={3} className="text-center py-4">
+                  <td colSpan={5} className="text-center py-4">
                     <FontAwesomeIcon
                       icon={faSpinner}
                       width={40}
@@ -132,12 +134,14 @@ const TypePage: React.FC = (): JSX.Element => {
                     <td className="px-4 py-4">
                       {index + 1 + (currentPage - 1) * itemsPerPage}
                     </td>
-                    <td className="px-4 py-4">{item.type}</td>
+                    <td className="px-4 py-4">{item.name}</td>
+                    <td className="px-4 py-4">{item.stock}</td>
+                    <td className="px-4 py-4">{item.type.type}</td>
                     <td className="px-4 py-4">
                       <LinkSmallComponent
                         color="blue"
                         icon={faEdit}
-                        link={`/type/edit/${item.id}`}
+                        link={`/item/edit/${item.id}`}
                       >
                         Edit
                       </LinkSmallComponent>
@@ -181,4 +185,4 @@ const TypePage: React.FC = (): JSX.Element => {
   );
 };
 
-export default TypePage;
+export default ItemPage;

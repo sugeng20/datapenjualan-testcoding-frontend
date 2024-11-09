@@ -7,7 +7,7 @@ import React from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 
-const CreateType: React.FC = (): JSX.Element => {
+const CreateTypePage: React.FC = (): JSX.Element => {
   const [type, setType] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const Router = useRouter();
@@ -83,4 +83,4 @@ const CreateType: React.FC = (): JSX.Element => {
   );
 };
 
-export default CreateType;
+export default CreateTypePage;
