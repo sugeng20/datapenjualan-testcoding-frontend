@@ -6,6 +6,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 
+interface Item {
+  type: string;
+  quantity_sold: number;
+  items_count: number;
+}
+
 const DashboardPage: React.FC = (): JSX.Element => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +21,6 @@ const DashboardPage: React.FC = (): JSX.Element => {
     null,
     null,
   ]);
-  const [startDateRange, setStartDateRange] = useState("");
 
   const [startDate, endDate] = dateRange;
 
@@ -138,7 +143,7 @@ const DashboardPage: React.FC = (): JSX.Element => {
                   </td>
                 </tr>
               ) : (
-                data.map((item: any, index: number) => (
+                data.map((item: Item, index: number) => (
                   <tr className="divide-x divide-gray-200" key={index}>
                     <td className="px-4 py-4">
                       {index + 1 + (currentPage - 1) * itemsPerPage}

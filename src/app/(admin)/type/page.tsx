@@ -8,6 +8,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
+interface Item {
+  id: string;
+  type: string;
+}
+
 const TypePage: React.FC = (): JSX.Element => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -127,7 +132,7 @@ const TypePage: React.FC = (): JSX.Element => {
                   </td>
                 </tr>
               ) : (
-                data.map((item: any, index: number) => (
+                data.map((item: Item, index: number) => (
                   <tr className="divide-x divide-gray-200" key={index}>
                     <td className="px-4 py-4">
                       {index + 1 + (currentPage - 1) * itemsPerPage}

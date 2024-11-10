@@ -4,10 +4,9 @@ import Image from "next/image";
 import Logo from "@/assets/logo.jpeg";
 import InputComponent from "@/components/InputComponent";
 import ButtonComponent from "@/components/ButtonComponent";
-import React, { useEffect } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { env } from "process";
 
 const Home = () => {
   const [username, setUsername] = React.useState("");
@@ -31,12 +30,12 @@ const Home = () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      Router.push("/type");
+      Router.push("/dashboard");
     } catch (error) {
       Swal.fire({
         icon: "error",
         title: "Gagal Login",
-        text: "Anda belum login",
+        text: `${error}Anda belum login`,
       });
       setLoading(false);
     }

@@ -9,6 +9,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState, useCallback } from "react";
 import Swal from "sweetalert2";
 
+interface Item {
+  name: string;
+  old_stock: number;
+  quantity_sold: number;
+  date: string;
+  type: string;
+  id: string;
+}
+
 const TransactionPage: React.FC = (): JSX.Element => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +51,7 @@ const TransactionPage: React.FC = (): JSX.Element => {
         setLoading(false);
       }
     },
-    [itemsPerPage, sortItem, sortDate]
+    [itemsPerPage, sortItem, sortDate, search]
   );
 
   const deleteType = async (id: string) => {
@@ -171,7 +180,7 @@ const TransactionPage: React.FC = (): JSX.Element => {
                   </td>
                 </tr>
               ) : (
-                data.map((item: any, index: number) => (
+                data.map((item: Item, index: number) => (
                   <tr className="divide-x divide-gray-200" key={index}>
                     <td className="px-4 py-4">
                       {index + 1 + (currentPage - 1) * itemsPerPage}

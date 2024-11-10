@@ -7,6 +7,11 @@ import React, { useEffect } from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 
+interface Item {
+  id: string;
+  name: string;
+}
+
 const EditTransactionPage = ({ params }: { params: { id: string } }) => {
   const [itemId, setItemId] = React.useState("");
   const [quantitySold, setQuantitySold] = React.useState("");
@@ -106,7 +111,7 @@ const EditTransactionPage = ({ params }: { params: { id: string } }) => {
 
     fetchDataItem();
     fetchDataTrnsaction();
-  }, []);
+  }, [params.id]);
 
   return (
     <>
@@ -133,7 +138,7 @@ const EditTransactionPage = ({ params }: { params: { id: string } }) => {
                 required
               >
                 <option value="">Pilih</option>
-                {dataItem.map((item: any) => (
+                {dataItem.map((item: Item) => (
                   <option
                     key={item.id}
                     value={item.id}

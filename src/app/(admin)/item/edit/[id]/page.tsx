@@ -7,6 +7,11 @@ import React, { useEffect } from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 
+interface Item {
+  id: string;
+  type: string;
+}
+
 const EditItemPage = ({ params }: { params: { id: string } }) => {
   const [name, setName] = React.useState("");
   const [stock, setStock] = React.useState("");
@@ -107,7 +112,7 @@ const EditItemPage = ({ params }: { params: { id: string } }) => {
 
     fetchDataType();
     fetchDataItem();
-  }, []);
+  }, [params.id]);
 
   return (
     <>
@@ -119,7 +124,7 @@ const EditItemPage = ({ params }: { params: { id: string } }) => {
       </div>
 
       <div className="py-10 px-8 bg-white border shadow mt-8 rounded-2xl">
-        <LinkComponent link="/type">Kembali</LinkComponent>
+        <LinkComponent link="/item">Kembali</LinkComponent>
 
         <form onSubmit={handleSubmit} className="mt-10">
           <InputRowComponent
@@ -152,7 +157,7 @@ const EditItemPage = ({ params }: { params: { id: string } }) => {
                 required
               >
                 <option value="">Pilih</option>
-                {dataType.map((item: any) => (
+                {dataType.map((item: Item) => (
                   <option
                     key={item.id}
                     value={item.id}

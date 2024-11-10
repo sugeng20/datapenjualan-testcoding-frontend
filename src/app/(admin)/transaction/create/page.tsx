@@ -7,6 +7,11 @@ import React, { useEffect } from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 
+interface Item {
+  id: string;
+  name: string;
+}
+
 const CreateTransactionPage: React.FC = (): JSX.Element => {
   const [itemId, setItemId] = React.useState("");
   const [quantitySold, setQuantitySold] = React.useState("");
@@ -107,7 +112,7 @@ const CreateTransactionPage: React.FC = (): JSX.Element => {
                 required
               >
                 <option value="">Pilih</option>
-                {dataItem.map((item: any) => (
+                {dataItem.map((item: Item) => (
                   <option key={item.id} value={item.id}>
                     {item.name}
                   </option>

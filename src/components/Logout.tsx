@@ -19,7 +19,7 @@ const Logout: React.FC = (): JSX.Element => {
       Swal.fire({
         icon: "error",
         title: "Gagal Login",
-        text: "Anda belum login",
+        text: `${error} Anda belum login`,
       });
     }
   };

@@ -79,7 +79,7 @@ const EditTypePage = ({ params }: { params: { id: string } }) => {
       }
     };
     fetchData();
-  }, []);
+  }, [params.id]);
 
   return (
     <>

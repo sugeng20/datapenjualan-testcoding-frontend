@@ -122,7 +122,7 @@ const CreateItemPage: React.FC = (): JSX.Element => {
                 required
               >
                 <option value="">Pilih</option>
-                {dataType.map((item: any) => (
+                {dataType.map((item: Item) => (
                   <option key={item.id} value={item.id}>
                     {item.type}
                   </option>
@@ -136,5 +136,10 @@ const CreateItemPage: React.FC = (): JSX.Element => {
     </>
   );
 };
+
+interface Item {
+  id: string;
+  type: string;
+}
 
 export default CreateItemPage;
