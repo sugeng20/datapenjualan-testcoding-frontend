@@ -6,7 +6,7 @@ import LinkSmallComponent from "@/components/LinkSmallComponent";
 import { formatDate } from "@/utils/formatDate";
 import { faEdit, faSpinner, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Swal from "sweetalert2";
 
 const TransactionPage: React.FC = (): JSX.Element => {
@@ -14,7 +14,36 @@ const TransactionPage: React.FC = (): JSX.Element => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 5;
+  const [search, setSearch] = useState("");
+  const [sortItem, setSortItem] = useState("");
+  const [sortDate, setSortDate] = useState("");
+  const itemsPerPage = 10;
+
+  const fetchData = useCallback(
+    async (
+      page: number = 1,
+      searchTerm: string = search,
+      sortItemTerm: string = sortItem,
+      sortDateTerm: string = sortDate
+    ) => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BACKEND}/transaction?page=${page}&limit=${itemsPerPage}&search=${searchTerm}&sort_item_name=${sortItemTerm}&sort_date=${sortDateTerm}`
+        );
+        const json = await response.json();
+        if (json.status === "success") {
+          setData(json.data.data);
+          setTotalPages(Math.ceil(json.data.total / itemsPerPage));
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [itemsPerPage, sortItem, sortDate]
+  );
 
   const deleteType = async (id: string) => {
     const response = await fetch(
@@ -56,43 +85,13 @@ const TransactionPage: React.FC = (): JSX.Element => {
     });
   };
 
-  const fetchData = async (page: number) => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BACKEND}/transaction?page=${page}&limit=${itemsPerPage}`,
-        {
-          method: "GET",
-        }
-      );
-      const json = await response.json();
-      if (json.status === "success") {
-        setData(json.data.data);
-        console.log(json.data.total);
-
-        setTotalPages(Math.ceil(json.data.total / itemsPerPage));
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     fetchData(currentPage);
-  }, [currentPage]);
+  }, [fetchData, currentPage]);
 
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+  const handleSearch = () => {
+    setCurrentPage(1);
+    fetchData(1, search);
   };
 
   return (
@@ -109,15 +108,53 @@ const TransactionPage: React.FC = (): JSX.Element => {
           Tambah Transaksi
         </LinkComponent>
 
-        <div className="w-full border border-gray-200 rounded-xl overflow-x-auto mt-10">
+        <div className="grid grid-cols-12 mt-10">
+          <div className="col-span-4">
+            <input
+              type="text"
+              placeholder="Cari disini"
+              className="py-4 px-2 text-sm w-full border border-gray-300 rounded-xl"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <button
+            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-xl"
+            onClick={handleSearch}
+          >
+            Cari
+          </button>
+        </div>
+
+        <div className="w-full border border-gray-200 rounded-xl overflow-x-auto mt-5">
           <table className="w-full divide-y divide-gray-200">
             <thead className="bg-gray-50 text-slate-800">
               <tr className="divide-x divide-gray-200">
                 <th className="px-4 py-4">No</th>
-                <th className="px-4 py-4">Nama Barang</th>
+                <th className="px-4 py-4">
+                  Nama Barang{" "}
+                  <select
+                    onChange={(e) => setSortItem(e.target.value)}
+                    className="divide-y ml-3 divide-gray-200"
+                  >
+                    <option value="">Urutkan</option>
+                    <option value="asc">A-Z</option>
+                    <option value="desc">Z-A</option>
+                  </select>{" "}
+                </th>
                 <th className="px-4 py-4">Stock</th>
                 <th className="px-4 py-4">Jumlah Terjual</th>
-                <th className="px-4 py-4">Tanggal Transaksi</th>
+                <th className="px-4 py-4">
+                  Tanggal Transaksi{" "}
+                  <select
+                    onChange={(e) => setSortDate(e.target.value)}
+                    className="divide-y ml-3 divide-gray-200"
+                  >
+                    <option value="">Urutkan</option>
+                    <option value="asc">A-Z</option>
+                    <option value="desc">Z-A</option>
+                  </select>{" "}
+                </th>
                 <th className="px-4 py-4">Jenis Barang</th>
                 <th className="px-4 py-4">Aksi</th>
               </tr>
@@ -139,11 +176,11 @@ const TransactionPage: React.FC = (): JSX.Element => {
                     <td className="px-4 py-4">
                       {index + 1 + (currentPage - 1) * itemsPerPage}
                     </td>
-                    <td className="px-4 py-4">{item.item.name}</td>
+                    <td className="px-4 py-4">{item.name}</td>
                     <td className="px-4 py-4">{item.old_stock}</td>
                     <td className="px-4 py-4">{item.quantity_sold}</td>
                     <td className="px-4 py-4">{formatDate(item.date)}</td>
-                    <td className="px-4 py-4">{item.item.type.type}</td>
+                    <td className="px-4 py-4">{item.type}</td>
                     <td className="px-4 py-4">
                       <LinkSmallComponent
                         color="blue"
@@ -171,7 +208,7 @@ const TransactionPage: React.FC = (): JSX.Element => {
         <div className="flex justify-between items-center mt-4">
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-            onClick={goToPreviousPage}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
             Previous
@@ -181,7 +218,9 @@ const TransactionPage: React.FC = (): JSX.Element => {
           </span>
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-            onClick={goToNextPage}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
           >
             Next

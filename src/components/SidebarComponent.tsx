@@ -13,6 +13,11 @@ import React from "react";
 const SidebarComponent: React.FC = (): JSX.Element => {
   const itemSidebar = [
     {
+      label: "Dashboard",
+      icon: faDashboard,
+      link: "/dashboard",
+    },
+    {
       label: "Jenis Barang",
       icon: faDatabase,
       link: "/type",

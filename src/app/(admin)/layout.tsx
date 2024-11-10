@@ -1,6 +1,6 @@
 "use client";
 
-import Logo from "@/assets/logo.png";
+import Logo from "@/assets/logo.jpeg";
 import Image from "next/image";
 import Avatar from "@/assets/avatar/1.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,6 +8,8 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import SidebarComponent from "@/components/SidebarComponent";
 import Logout from "@/components/Logout";
+import "react-date-range/dist/styles.css"; // main css file
+import "react-date-range/dist/theme/default.css"; // theme css file
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const [sidebarActive, setSidebarActive] = React.useState(false);
@@ -24,8 +26,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             sidebarActive ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <div className="flex mt-5">
-            <Image alt="Logo" className="w-44" src={Logo} />
+          <div className="flex mt-5 items-center">
+            <Image alt="Logo" className="w-16" src={Logo} />
             <FontAwesomeIcon
               onClick={handleSidebarActive}
               className={`ml-auto w-6 cursor-pointer ${

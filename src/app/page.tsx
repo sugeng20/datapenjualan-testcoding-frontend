@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import Logo from "@/assets/logo.png";
+import Logo from "@/assets/logo.jpeg";
 import InputComponent from "@/components/InputComponent";
 import ButtonComponent from "@/components/ButtonComponent";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import { env } from "process";
 
 const Home = () => {
   const [username, setUsername] = React.useState("");
@@ -53,7 +54,7 @@ const Home = () => {
             />
           </div>
           <p className="text-center text-sm font-bold my-6">
-            Selamat Datang di Aplikasi Metadata dan Dalev!
+            Selamat Datang di Aplikasi {process.env.NEXT_PUBLIC_APP_NAME}!
           </p>
 
           <form onSubmit={handlerLogin}>
