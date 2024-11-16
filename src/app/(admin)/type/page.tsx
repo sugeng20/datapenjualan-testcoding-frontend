@@ -3,46 +3,27 @@
 import ButtonSmallComponent from "@/components/ButtonSmallComponent";
 import LinkComponent from "@/components/LinkComponent";
 import LinkSmallComponent from "@/components/LinkSmallComponent";
+import {
+  deleteType,
+  fetchTypes,
+  setCurrentPage,
+} from "@/lib/features/type/typeSlice";
+import { AppDispatch, RootState } from "@/lib/store";
 import { faEdit, faSpinner, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
-interface Item {
-  id: string;
-  type: string;
-}
-
 const TypePage: React.FC = (): JSX.Element => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 5;
+  const dispatch = useDispatch<AppDispatch>();
+  const { data, loading, currentPage, totalPages } = useSelector(
+    (state: RootState) => state.types
+  );
 
-  const deleteType = async (id: string) => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BACKEND}/type/${id}`,
-      {
-        method: "DELETE",
-      }
-    );
-    const json = await response.json();
-    if (json.status === "success") {
-      Swal.fire({
-        title: "Deleted!",
-        text: "Your file has been deleted.",
-        icon: "success",
-      });
-      fetchData(currentPage);
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "Gagal",
-        text: json.message,
-      });
-    }
-  };
+  useEffect(() => {
+    dispatch(fetchTypes(currentPage));
+  }, [dispatch, currentPage]);
 
   const handleDelete = (id: string) => {
     Swal.fire({
@@ -55,37 +36,24 @@ const TypePage: React.FC = (): JSX.Element => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteType(id);
+        dispatch(deleteType(id))
+          .then(() => {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your file has been deleted.",
+              icon: "success",
+            });
+          })
+          .catch((error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Gagal",
+              text: error.message,
+            });
+          });
       }
     });
   };
-
-  const fetchData = async (page: number) => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BACKEND}/type?page=${page}&limit=${itemsPerPage}`,
-        {
-          method: "GET",
-        }
-      );
-      const json = await response.json();
-      if (json.status === "success") {
-        setData(json.data.data);
-        console.log(json.data.total);
-
-        setTotalPages(Math.ceil(json.data.total / itemsPerPage));
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData(currentPage);
-  }, [currentPage]);
 
   const goToPreviousPage = () => {
     if (currentPage > 1) {
@@ -132,10 +100,10 @@ const TypePage: React.FC = (): JSX.Element => {
                   </td>
                 </tr>
               ) : (
-                data.map((item: Item, index: number) => (
+                data.map((item, index: number) => (
                   <tr className="divide-x divide-gray-200" key={index}>
                     <td className="px-4 py-4">
-                      {index + 1 + (currentPage - 1) * itemsPerPage}
+                      {index + 1 + (currentPage - 1) * 5}
                     </td>
                     <td className="px-4 py-4">{item.type}</td>
                     <td className="px-4 py-4">

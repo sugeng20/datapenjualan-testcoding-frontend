@@ -6,80 +6,41 @@ import LinkComponent from "@/components/LinkComponent";
 import React, { useEffect } from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/lib/store";
+import { fetchTypeById, updateType } from "@/lib/features/type/typeSlice";
 
 const EditTypePage = ({ params }: { params: { id: string } }) => {
-  const [type, setType] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const Router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const { type, loading } = useSelector((state: RootState) => state.types);
+  const [inputType, setInputType] = React.useState(type);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    setLoading(true);
     e.preventDefault();
-    const formData = {
-      type: type,
-    };
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BACKEND}/type/${params.id}`,
-        {
-          method: "PUT",
-          body: JSON.stringify(formData),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const json = await response.json();
-      if (json.status === "success") {
+    dispatch(updateType({ id: params.id, type: inputType }))
+      .then(() => {
         Swal.fire({
           position: "top-end",
           icon: "success",
-          title: json.message,
+          title: "Jenis barang berhasil diperbarui",
           showConfirmButton: false,
           timer: 1500,
         });
-        setLoading(false);
-        Router.push("/type");
-      } else {
+        router.push("/type");
+      })
+      .catch((error) => {
         Swal.fire({
           icon: "error",
           title: "Gagal",
-          text: json.message,
+          text: error.message || "Ada kesalahan di server",
         });
-        setLoading(false);
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Gagal",
-        text: "Ada Kesalahan di server",
       });
-      setLoading(false);
-      console.log(error);
-    }
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BACKEND}/type/${params.id}`,
-          {
-            method: "GET",
-          }
-        );
-
-        const json = await response.json();
-        if (json.status === "success") {
-          setType(json.data.type);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, [params.id]);
+    dispatch(fetchTypeById(params.id));
+  }, [dispatch, params.id]);
 
   return (
     <>
@@ -99,8 +60,8 @@ const EditTypePage = ({ params }: { params: { id: string } }) => {
             type="text"
             id="type"
             placeholder="Masukkan Jenis Barang"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
+            value={inputType}
+            onChange={(e) => setInputType(e.target.value)}
             required
           />
           <ButtonComponent loading={loading} label="Simpan" type="submit" />

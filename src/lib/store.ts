@@ -3,11 +3,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import counterReducer from "@/lib/features/counter/counterSlice";
 import itemReducer from "@/lib/features/item/itemSlice";
+import typeReducer from "@/lib/features/type/typeSlice";
 
 const store = configureStore({
   reducer: {
     counter: counterReducer,
     items: itemReducer,
+    types: typeReducer,
   },
 });
 

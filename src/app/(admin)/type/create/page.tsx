@@ -6,53 +6,37 @@ import LinkComponent from "@/components/LinkComponent";
 import React from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/lib/store";
+import { addToType } from "@/lib/features/type/typeSlice";
 
 const CreateTypePage: React.FC = (): JSX.Element => {
   const [type, setType] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const Router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+
+  const { loading } = useSelector((state: RootState) => state.types);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    setLoading(true);
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("type", type);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BACKEND}/type`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      const json = await response.json();
-      if (json.status === "success") {
+    dispatch(addToType({ type }))
+      .then(() => {
         Swal.fire({
           position: "top-end",
           icon: "success",
-          title: json.message,
+          title: "Jenis barang berhasil ditambahkan",
           showConfirmButton: false,
           timer: 1500,
         });
-        setLoading(false);
-        Router.push("/type");
-      } else {
+        router.push("/type");
+      })
+      .catch((error) => {
         Swal.fire({
           icon: "error",
-          title: "Gagal Login",
-          text: json.message,
+          title: "Gagal",
+          text: error.message || "Ada kesalahan di server",
         });
-        setLoading(false);
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Gagal Login",
-        text: "Ada Kesalahan di server",
       });
-      setLoading(false);
-      console.log(error);
-    }
   };
 
   return (
