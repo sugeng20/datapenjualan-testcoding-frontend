@@ -2,6 +2,7 @@
 
 import IconSidebarComponent from "@/components/IconSidebarComponent";
 import {
+  faAddressBook,
   faArchive,
   faCartShopping,
   faDashboard,
@@ -31,6 +32,11 @@ const SidebarComponent: React.FC = (): JSX.Element => {
       label: "Transaksi",
       icon: faCartShopping,
       link: "/transaction",
+    },
+    {
+      label: "Redux",
+      icon: faAddressBook,
+      link: "/redux",
     },
   ];
 

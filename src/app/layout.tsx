@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cairo } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/ProgressBarProvider";
+import ReduxProvider from "@/lib/provider";
 
 export const metadata: Metadata = {
   title: "Data Penjualan Application",
@@ -21,7 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${cairo.className} bg-[#F6F6F6]`}>
-        <Providers>{children}</Providers>
+        <ReduxProvider>
+          <Providers>{children}</Providers>
+        </ReduxProvider>
       </body>
     </html>
   );
