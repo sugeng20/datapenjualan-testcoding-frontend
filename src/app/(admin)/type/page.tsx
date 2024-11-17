@@ -4,14 +4,14 @@ import ButtonSmallComponent from "@/components/ButtonSmallComponent";
 import LinkComponent from "@/components/LinkComponent";
 import LinkSmallComponent from "@/components/LinkSmallComponent";
 import {
-  deleteType,
-  fetchTypes,
+  deleteTypeRequest,
+  fetchTypesRequest,
   setCurrentPage,
 } from "@/lib/features/type/typeSlice";
 import { AppDispatch, RootState } from "@/lib/store";
 import { faEdit, faSpinner, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
@@ -22,7 +22,7 @@ const TypePage: React.FC = (): JSX.Element => {
   );
 
   useEffect(() => {
-    dispatch(fetchTypes(currentPage));
+    dispatch(fetchTypesRequest(currentPage));
   }, [dispatch, currentPage]);
 
   const handleDelete = (id: string) => {
@@ -36,35 +36,9 @@ const TypePage: React.FC = (): JSX.Element => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch(deleteType(id))
-          .then(() => {
-            Swal.fire({
-              title: "Deleted!",
-              text: "Your file has been deleted.",
-              icon: "success",
-            });
-          })
-          .catch((error) => {
-            Swal.fire({
-              icon: "error",
-              title: "Gagal",
-              text: error.message,
-            });
-          });
+        dispatch(deleteTypeRequest(id));
       }
     });
-  };
-
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
   };
 
   return (
@@ -133,7 +107,7 @@ const TypePage: React.FC = (): JSX.Element => {
         <div className="flex justify-between items-center mt-4">
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-            onClick={goToPreviousPage}
+            onClick={() => dispatch(setCurrentPage(currentPage - 1))}
             disabled={currentPage === 1}
           >
             Previous
@@ -143,7 +117,7 @@ const TypePage: React.FC = (): JSX.Element => {
           </span>
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-            onClick={goToNextPage}
+            onClick={() => dispatch(setCurrentPage(currentPage + 1))}
             disabled={currentPage === totalPages}
           >
             Next

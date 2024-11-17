@@ -8,7 +8,10 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
-import { fetchTypeById, updateType } from "@/lib/features/type/typeSlice";
+import {
+  fetchTypeByIdRequest,
+  updateTypeRequest,
+} from "@/lib/features/type/typeSlice";
 
 const EditTypePage = ({ params }: { params: { id: string } }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,29 +21,24 @@ const EditTypePage = ({ params }: { params: { id: string } }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(updateType({ id: params.id, type: inputType }))
-      .then(() => {
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "Jenis barang berhasil diperbarui",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        router.push("/type");
-      })
-      .catch((error) => {
-        Swal.fire({
-          icon: "error",
-          title: "Gagal",
-          text: error.message || "Ada kesalahan di server",
-        });
-      });
+    dispatch(updateTypeRequest({ id: params.id, type: inputType }));
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Jenis barang berhasil diubah",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    router.push("/type");
   };
 
   useEffect(() => {
-    dispatch(fetchTypeById(params.id));
+    dispatch(fetchTypeByIdRequest(params.id));
   }, [dispatch, params.id]);
+
+  useEffect(() => {
+    setInputType(type);
+  }, [type]);
 
   return (
     <>

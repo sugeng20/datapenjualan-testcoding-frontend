@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
-import { addToType } from "@/lib/features/type/typeSlice";
+import { addTypeRequest } from "@/lib/features/type/typeSlice";
 
 const CreateTypePage: React.FC = (): JSX.Element => {
   const [type, setType] = React.useState("");
@@ -19,24 +19,15 @@ const CreateTypePage: React.FC = (): JSX.Element => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(addToType({ type }))
-      .then(() => {
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "Jenis barang berhasil ditambahkan",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        router.push("/type");
-      })
-      .catch((error) => {
-        Swal.fire({
-          icon: "error",
-          title: "Gagal",
-          text: error.message || "Ada kesalahan di server",
-        });
-      });
+    dispatch(addTypeRequest({ type }));
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Jenis barang berhasil ditambahkan",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    router.push("/type");
   };
 
   return (
